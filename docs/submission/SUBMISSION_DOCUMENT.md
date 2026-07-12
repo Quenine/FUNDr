@@ -2,7 +2,7 @@
 
 ## Project title
 
-TradeCycle — USDC milestone finance for SMEs on Arc
+TradeCycle â€” USDC milestone finance for SMEs on Arc
 
 ## Project description
 
@@ -14,7 +14,7 @@ Best SME Trade Finance & Working Capital Workflow
 
 ## Circle Developer Account
 
-`{{CIRCLE_ACCOUNT_EMAIL}}`
+`quadriabdulkabirlekan@gmail.com`
 
 ## Products used
 
@@ -73,7 +73,7 @@ The owner-gated Admin dashboard supports operator-entry policy and manual applic
 
 - **Working application:** https://tradecycle-arc.vercel.app/
 - **GitHub repository:** https://github.com/Quenine/tradecycle-arc
-- **Product demo:** `{{DEMO_VIDEO_URL}}`
+- **Product demo:** `https://drive.google.com/file/d/1KywVEa2Po4EEqDWDdXum-bsBpjGeQvzr/view?usp=sharing`
 
 ## Documentation
 
