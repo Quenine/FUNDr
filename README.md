@@ -1,160 +1,128 @@
 # TradeCycle
 
-**USDC milestone finance for SMEs on Arc**
+TradeCycle is a testnet protocol for milestone-controlled USDC working capital for SME production and trade cycles on Arc. Operators create financing cycles, investors receive transferable cycle-share tokens, independent verifiers approve milestone releases, and settlement follows current token ownership. Completed activity contributes to an onchain SME Credit Passport.
 
-Track: **Best SME Trade Finance & Working Capital Workflow**
+- **Live application:** https://tradecycle-arc.vercel.app/
+- **Repository:** https://github.com/Quenine/tradecycle-arc
+- **Challenge track:** Best SME Trade Finance & Working Capital Workflow
+- **Network:** Arc Testnet
 
-TradeCycle is a USDC-powered SME working-capital platform on Arc. It lets operators raise capital for real-world production and trade cycles, releases funds through verifier-approved milestones, tokenizes investor positions, and automatically distributes repayment. Each completed cycle contributes to an onchain Credit Passport for the SME operator.
+![TradeCycle architecture](docs/assets/tradecycle-simplified-architecture.png)
+
+## Problem
+
+SME working-capital finance is often opaque, slow, and difficult to monitor after funding. Capital providers may lack verifiable evidence of production progress, while successful operators cannot easily reuse their repayment history.
+
+## Solution
+
+TradeCycle places USDC funding, milestone evidence, verifier quorum, settlement, transferable financing positions, and operator history in a single onchain workflow. Capital remains in cycle contracts and is released by approved tranche rather than through an offchain platform account.
 
 ## Core workflow
 
-1. SME operator applies or creates a production/trade cycle.
-2. Investors fund the cycle with USDC.
-3. The cycle contract holds capital in escrow.
-4. Operators submit milestone evidence.
-5. Verifiers approve evidence before milestone releases.
-6. Operators repay expected revenue.
-7. Investors withdraw payout.
-8. Operator history is reflected in the Credit Passport.
+1. An operator applies under the configured onboarding policy; manual mode uses owner-gated review.
+2. An approved operator creates a production or trade cycle.
+3. Investors fund the cycle with USDC held by the cycle contract.
+4. Funding mints transferable ERC-20 cycle-share tokens.
+5. Holders may keep their position or use the onchain USDC order book where listings and counterparties exist.
+6. Verifiers review evidence and quorum approves milestone releases.
+7. The operator repays the cycle's configured settlement amount.
+8. Current token holders redeem settlement or default recovery.
+9. Completed outcomes contribute to the operator's Credit Passport.
 
-## Why Arc and USDC
+## Core features
 
-Arc provides an EVM environment for programmable stablecoin commerce. TradeCycle uses Arc Testnet for cycle creation, USDC escrow, verifier approvals, milestone releases, repayment distribution, and investor withdrawals.
+- Policy-gated operator onboarding and owner-gated protocol operations
+- USDC escrow in per-cycle contracts
+- Evidence-backed, verifier-approved milestone releases
+- Transferable cycle-share positions
+- Partial-fill USDC order book with treasury trading fees
+- Current-holder settlement and default recovery
+- Operator collateral and reserve recovery paths
+- Onchain Credit Passport profiles
+- Responsive Next.js application with automated release QA
 
-USDC is the unit of account and settlement asset for investor funding, operator collateral, verifier staking, milestone releases, repayment, protocol fees, reserve flows, and withdrawals.
+Liquidity is market-dependent. TradeCycle does not provide guaranteed exits, fair-value pricing, an AMM for every cycle, or guaranteed market making.
 
-## Key contracts
+## Actors
 
-- `ProductionCycleFactoryV2`: operator approval and cycle creation.
-- `ProductionCycle`: USDC funding, milestone escrow, release, repayment, withdrawal, and default paths.
-- `CycleShareToken`: tokenized investor position for a cycle.
-- `VerifierRegistry`: verifier staking, quorum, approvals, and rewards.
-- `CollateralVault`: operator collateral support.
-- `ReservePool`: investor-protection reserve support.
-- `ProtocolTreasury`: protocol fee destination.
-- `CycleTokenMarketplaceV2`: secondary market for cycle-share tokens.
-- `YieldOracle`: optional revenue and risk estimate storage.
+- **Operators** apply, provide business information, deposit collateral where required, create cycles, submit evidence, and repay.
+- **Investors** fund cycles, receive cycle shares, hold or trade positions, and redeem as current holders.
+- **Verifiers** stake USDC, review evidence, and approve milestones through quorum.
+- **Protocol administrators** manage operator-entry policy, treasury and reserve operations, marketplace configuration, risk inputs, and separately gated liquidity infrastructure within deployed permissions.
 
-## Frontend routes
+Administration does not replace cycle-state enforcement or verifier quorum. This testnet release does not claim decentralized governance.
 
-- `/`: landing page and cycle browser.
-- `/demo`: guided product walkthrough.
-- `/funding`: Circle and Arc funding-route map.
-- `/submission`: submission readiness page.
-- `/operator`: operator application and cycle creation.
-- `/operator/dashboard`: operator evidence, release, settlement, and collateral actions.
-- `/cycle/[address]`: cycle detail and investor funding page.
-- `/verifier`: verifier staking and approval workflow.
-- `/portfolio`: investor positions and withdrawals.
-- `/market`: cycle-token secondary market.
-- `/credit-passport`: connected-wallet Credit Passport entry point.
-- `/credit-passport/[operator]`: operator-specific Credit Passport.
-- `/stats`: protocol stats.
-- `/faucet`: Arc Testnet USDC guidance.
-
-## Circle / Arc products used
+## Arc and Circle products
 
 Implemented:
 
-- Arc: smart-contract settlement layer.
-- USDC: funding, escrow, milestone releases, repayment, fees, reserves, and withdrawals.
+- **Arc Testnet** for contract execution and settlement
+- **USDC** for funding, escrow, marketplace payment, fees, repayment, reserve capital, and redemption
 
-Architecture-ready or future paths, not implemented in this demo:
+Future or not implemented:
 
 - Circle Gateway
 - CCTP / Bridge Kit
 - Circle Wallets
 - USYC
 
-Not claimed as implemented: Gateway, CCTP / Bridge Kit, Circle Wallets, USYC, StableFX, and Nanopayments.
+StableFX and Nanopayments are not used by the current protocol.
 
-## Repository structure
+## Deployed contracts
 
-```text
-contracts/      Solidity contracts
-scripts/        Hardhat scripts
-deployments/    Deployment address files
-docs/           Submission and architecture docs
-rwa-ui/         Next.js frontend
-```
+Core Arc Testnet addresses include:
 
-## Setup
+| Contract | Address |
+| --- | --- |
+| ProductionCycleFactoryV2 | `0xB60522F3A62a1a092019E615722788F1C4af6319` |
+| CycleTokenMarketplaceV2 | `0x7063938d47A0bB7f9f1CC305c82450715266b1D5` |
+| USDC | `0x3600000000000000000000000000000000000000` |
 
-Install root dependencies:
+The complete deployment table and verification instructions are in [docs/DEPLOYMENTS.md](docs/DEPLOYMENTS.md).
 
-```shell
+## Local development
+
+```bash
 npm install
-```
-
-Compile contracts from the repo root:
-
-```shell
 npm run compile
-```
 
-Install frontend dependencies and run the app:
-
-```shell
 cd rwa-ui
 npm install
 npm run dev
 ```
 
-Build and lint the frontend from `/rwa-ui`:
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for prerequisites, configuration names, Windows notes, and production-build commands.
 
-```shell
-npm run lint
+## Testing and verification
+
+```bash
+npm test
+npm run check:text
+npm run verify:arc
+
+cd rwa-ui
+npm run lint -- --max-warnings=0
 npm run build
+npm run test:e2e:local
 ```
 
-On Windows, run the UI build from inside `/rwa-ui`; chained root npm scripts can trigger Next.js worker `spawn EPERM` errors.
-
-## Environment variables
-
-The frontend reads public Arc Testnet addresses from `rwa-ui/.env.local` or the hosting provider environment. Do not commit `.env`, `.env.local`, private keys, seed phrases, or API secrets.
-
-Common frontend variables:
-
-```shell
-NEXT_PUBLIC_PROTOCOL_OWNER=
-NEXT_PUBLIC_FACTORY_ADDRESS=
-NEXT_PUBLIC_STABLECOIN_ADDRESS=
-NEXT_PUBLIC_TREASURY_ADDRESS=
-NEXT_PUBLIC_RESERVE_POOL_ADDRESS=
-NEXT_PUBLIC_VERIFIER_REGISTRY_ADDRESS=
-NEXT_PUBLIC_COLLATERAL_VAULT_ADDRESS=
-NEXT_PUBLIC_YIELD_ORACLE_ADDRESS=
-NEXT_PUBLIC_TOKEN_MARKETPLACE_ADDRESS=
-NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
-NEXT_PUBLIC_CHAIN_ID=5042002
-NEXT_PUBLIC_CHAIN_NAME=Arc Testnet
-NEXT_PUBLIC_RPC_URL=https://rpc.testnet.arc.network
-NEXT_PUBLIC_BLOCK_EXPLORER=https://testnet.arcscan.app
-```
+See [docs/TESTING.md](docs/TESTING.md) for test scope and safe manual testnet rehearsal guidance.
 
 ## Documentation
 
+- [Protocol guide](docs/PROTOCOL_GUIDE.md)
 - [Architecture](docs/ARCHITECTURE.md)
-- [Demo script](docs/DEMO_SCRIPT.md)
-- [Circle Product Feedback](docs/CIRCLE_PRODUCT_FEEDBACK.md)
-- [Submission checklist](docs/SUBMISSION.md)
-- [Final submission answers](docs/FINAL_SUBMISSION_ANSWERS.md)
-- [Deployment checklist](docs/DEPLOYMENT_CHECKLIST.md)
-- [Video recording checklist](docs/VIDEO_RECORDING_CHECKLIST.md)
-- [Security notes](docs/SECURITY_NOTES.md)
+- [Development](docs/DEVELOPMENT.md)
+- [Deployments](docs/DEPLOYMENTS.md)
+- [Testing](docs/TESTING.md)
+- [Security](SECURITY.md)
+- [Submission document](docs/submission/SUBMISSION_DOCUMENT.md)
+- [Circle Product Feedback](docs/submission/CIRCLE_PRODUCT_FEEDBACK.md)
 
-## Testnet disclaimer
+## Security and testnet status
 
-TradeCycle is a testnet demonstration only. It is not a regulated lending platform, credit rating service, investment recommendation, or financial product.
+TradeCycle is unaudited testnet software. It must not be used with real funds. Owner-controlled operations, frontend lifecycle policy, dependency risk, marketplace liquidity limitations, and production-hardening requirements are documented in [SECURITY.md](SECURITY.md).
 
-## Transferable investor positions and secondary liquidity
+## License
 
-Primary USDC funding mints ERC-20 `CycleShareToken` positions to investors. Tokens are transferable and may be listed in `CycleTokenMarketplaceV2`, whose order book escrows the seller's shares until they are filled or cancelled. Buyers can fill all or part of an active sell order. USDC moves directly from buyer to seller, less the configured trading fee sent to `ProtocolTreasury`; the purchased shares move from marketplace escrow to the buyer.
-
-Settlement and recovery rights follow current token ownership. After a successful distribution, the current holder burns shares through `ProductionCycle.withdraw`; after default, the current holder uses `withdrawAfterDefault`. An original investor who sold shares cannot redeem those sold shares. Active listings and willing counterparties determine liquidity: TradeCycle does not promise an exit, fair value, NAV, an AMM, or protocol market making.
-
-Lifecycle policy in the current frontend treats funding, active, and harvest-submitted shares as tradeable financing positions. After distribution or default, new buy/list actions are disabled in the UI, cancellation remains available, and holders are directed to Portfolio for settlement or recovery. The deployed marketplace contract itself does not inspect cycle state, so this lifecycle restriction is a frontend safety policy rather than onchain enforcement.
-
-## Protocol administration and trust assumptions
-
-TradeCycle's owner-gated Admin dashboard is the protocol operations and risk-control layer. Deployed permissions include operator-entry policy and reviews, treasury operations, reserve compensation, YieldOracle inputs, marketplace configuration, and separately gated advanced liquidity infrastructure. Investor funding and settlement remain enforced by cycle contracts, while verifier quorum controls milestone approval; the owner does not replace that quorum through the Admin UI. This testnet release does not claim decentralized governance. Multisig, timelock, and community governance are future hardening paths.
+This repository is licensed under the [MIT License](LICENSE).

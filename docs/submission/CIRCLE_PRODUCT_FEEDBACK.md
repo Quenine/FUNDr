@@ -1,4 +1,4 @@
-﻿# Circle Product Feedback
+# Circle Product Feedback
 
 ## 1. Why we chose these products for this use case
 

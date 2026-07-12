@@ -4,7 +4,7 @@ import * as path from "path"
 
 async function main() {
   const [deployer] = await ethers.getSigners()
-  console.log("\nFundR V2 Upgrade Deployment")
+  console.log("\nTradeCycle V2 Upgrade Deployment")
   console.log("Deployer:", deployer.address)
   if (network.name === "arcTestnet") {
     throw new Error("deployV2.ts deploys mock USDC upgrade components. Use scripts/deploy.ts for Arc Testnet so the protocol uses Arc's real USDC address and 6-decimal accounting.")
